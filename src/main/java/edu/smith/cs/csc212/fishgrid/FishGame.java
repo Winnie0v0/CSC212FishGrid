@@ -23,6 +23,10 @@ public class FishGame {
 	 * The home location.
 	 */
 	FishHome home;
+	
+	Heart heart;
+	
+	Bubble bubble;
 	/**
 	 * These are the missing fish!
 	 */
@@ -32,6 +36,8 @@ public class FishGame {
 	 * These are fish we've found!
 	 */
 	List<Fish> found;
+	
+	List<Fish> fishhome;
 	
 	/**
 	 * Number of steps!
@@ -48,22 +54,39 @@ public class FishGame {
 	 * @param w how wide is the grid?
 	 * @param h how tall is the grid?
 	 */
+	
+	int NUM_ROCKS = 10;
+	
+	int NUM_SNAIL = 2;
+	
+
+	
+	Random rand = ThreadLocalRandom.current();
+	
 	public FishGame(int w, int h) {
 		world = new World(w, h);
 		
 		missing = new ArrayList<Fish>();
 		found = new ArrayList<Fish>();
+		fishhome = new ArrayList<Fish>();
 		
 		// Add a home!
 		home = world.insertFishHome();
+		heart =  world.insertHeart();
+		bubble = world.insertBubble();
 		
-		// TODO(lab) Generate some more rocks!
-		// TODO(lab) Make 5 into a constant, so it's easier to find & change.
-		for (int i=0; i<5; i++) {
-			world.insertRockRandomly();
+		for (int i=0; i<NUM_ROCKS; i++) {
+			if (rand.nextDouble() < 0.5) {
+				world.insertRockRandomly();
+			}
+			else {
+				world.insertFallingRockRandomly();
+			}
 		}
 		
-		// TODO(lab) Make the snail!
+		for (int i=0; i<NUM_SNAIL; i++) {
+			world.insertSnailRandomly();
+		}
 		
 		// Make the player out of the 0th fish color.
 		player = new Fish(0, world);
@@ -93,8 +116,13 @@ public class FishGame {
 	 * @return true if the player has won (or maybe lost?).
 	 */
 	public boolean gameOver() {
-		// TODO(FishGrid) We want to bring the fish home before we win!
-		return missing.isEmpty();
+		if (missing.isEmpty() && found.isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	/**
@@ -102,7 +130,15 @@ public class FishGame {
 	 */
 	public void step() {
 		// Keep track of how long the game has run.
+		if (rand.nextDouble() < 0.02) {
+			heart =  world.insertHeart();
+		}
+		if (rand.nextDouble() < 0.02) {
+			bubble =  world.insertBubble();
+		}
+		
 		this.stepsTaken += 1;
+		lostFish();
 				
 		// These are all the objects in the world in the same cell as the player.
 		List<WorldObject> overlap = this.player.findSameCell();
@@ -120,33 +156,98 @@ public class FishGame {
 				Fish justFound = (Fish) wo;
 				
 				// Remove from world.
-				// TODO(lab): add to found instead! (So we see objectsFollow work!)
-				justFound.remove();
 				
-				// Increase score when you find a fish!
-				score += 10;
+				//justFound.remove();
+				found.add(justFound);
+				missing.remove(justFound);
+				// Earn 10 points when you find a fish!
+				// Earn extra 10 points when a fastScare fish is found!
+				// Earn extra 100 points when a fastScare fish is found!!
+				if (justFound.color == 6) {
+					score += 110;
+				}
+				else {
+					score += 10;
+				}
+				if (justFound.fastScare) {
+					score += 10;
+				} 
+			}
+			if (wo instanceof Heart) {
+				score += 520;
+				world.remove(wo);
+			}
+			if (wo instanceof Bubble) {
+				world.remove(wo);
+			}
+			if (wo instanceof FishHome) {
+				 fishhome.addAll(found);
+				 found.removeAll(found);
+				 for (WorldObject o : fishhome) {
+					 world.remove(o);
+				 }
 			}
 		}
 		
 		// Make sure missing fish *do* something.
 		wanderMissingFish();
+		
+		//homeFish();
 		// When fish get added to "found" they will follow the player around.
 		World.objectsFollow(player, found);
 		// Step any world-objects that run themselves.
 		world.stepAll();
 	}
 	
+	private void lostFish() {
+		if (found.size()>1 && this.stepsTaken>=20) {
+			if (rand.nextDouble() < 0.1) {
+				missing.add(found.get(found.size()-1));
+				found.remove(found.size()-1);
+			}	
+		}
+	}	
+	
 	/**
 	 * Call moveRandomly() on all of the missing fish to make them seem alive.
 	 */
 	private void wanderMissingFish() {
 		Random rand = ThreadLocalRandom.current();
+		List<WorldObject> overlapfish;
+		List<Fish> ff = new ArrayList<Fish>();
+		//List<Fish> remove = null;
 		for (Fish lost : missing) {
-			// 30% of the time, lost fish move randomly.
-			if (rand.nextDouble() < 0.3) {
-				// TODO(lab): What goes here?
+			if (lost.fastScare) {
+				if (rand.nextDouble() < 0.8) {
+					lost.moveRandomly();
+				}	
 			}
+			else {
+				if (rand.nextDouble() < 0.3) {
+					lost.moveRandomly();
+				}
+			}
+			
+			overlapfish = lost.findSameCell();
+			overlapfish.remove(lost);
+			
+			for (WorldObject hf : overlapfish) {
+				if (hf instanceof FishHome) {
+					fishhome.add(lost);
+					ff.add(lost);
+					world.remove(lost);
+				}
+				if (hf instanceof Heart) {
+					world.remove(hf);
+				}
+				if (hf instanceof Bubble) {
+					world.remove(hf);
+				}
+				// if fish bump into a bubble
+			}
+			
 		}
+		missing.removeAll(ff);
 	}
 
 	/**
@@ -155,10 +256,17 @@ public class FishGame {
 	 * @param y - the y-tile.
 	 */
 	public void click(int x, int y) {
-		// TODO(FishGrid) use this print to debug your World.canSwim changes!
 		System.out.println("Clicked on: "+x+","+y+ " world.canSwim(player,...)="+world.canSwim(player, x, y));
 		List<WorldObject> atPoint = world.find(x, y);
-		// TODO(FishGrid) allow the user to click and remove rocks.
+
+		for (WorldObject it : atPoint) {
+			if (it instanceof Rock) {
+				world.remove(it);
+			}
+			else if (it instanceof Bubble) {
+				world.remove(it);
+			}
+		}
 
 	}
 	

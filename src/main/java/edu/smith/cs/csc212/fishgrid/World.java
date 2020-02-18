@@ -157,6 +157,12 @@ public class World {
 		return r;
 	}
 	
+	public Rock insertFallingRockRandomly() {
+		FallingRock fr = new FallingRock(this);
+		insertRandomly(fr);
+		return fr;
+	}
+	
 	/**
 	 * Insert a new Fish into the world at random of a specific color.
 	 * @param color - the color of the fish.
@@ -174,6 +180,12 @@ public class World {
 		return home;
 	}
 	
+	public Bubble insertBubble() {
+		Bubble bubble = new Bubble(this);
+		insertRandomly(bubble);
+		return bubble;
+	}
+	
 	/**
 	 * Insert a new Snail at random into the world.
 	 * @return the snail!
@@ -182,6 +194,12 @@ public class World {
 		Snail snail = new Snail(this);
 		insertRandomly(snail);
 		return snail;
+	}
+	
+	public Heart insertHeart() {
+		Heart heart = new Heart(this);
+		insertRandomly(heart);
+		return heart;
 	}
 	
 	/**
@@ -204,18 +222,98 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// TODO(FishGrid): Don't let us move over rocks as a Fish.
 			// The other fish shouldn't step "on" the player, the player should step on the other fish.
+						// The other fish shouldn't step "on" the player, the player should step on the other fish.
 			if (it instanceof Snail) {
 				// This if-statement doesn't let anyone step on the Snail.
 				// The Snail(s) are not gonna take it.
 				return false;
 			}
+			if (it instanceof Rock) {
+				// This if-statement doesn't let anyone step on the Snail.
+				// The Snail(s) are not gonna take it.
+				return false;
+			}
+			if (it instanceof Fish) {
+				if (isPlayer) {
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the Snail.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			if (it instanceof FishHome) {
+				if (isPlayer || whoIsAsking instanceof Fish) {
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the Snail.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			if (it instanceof Bubble) {
+				if (isPlayer || whoIsAsking instanceof Fish) {
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the Snail.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			if (it instanceof Heart) {
+				if (isPlayer || whoIsAsking instanceof Fish) {
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the Snail.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			
 		}
-		
-		// If we didn't see an obstacle, we can move there!
+					
+					// If we didn't see an obstacle, we can move there!
+			return true;
+		}
+	
+	/*
+			if (isPlayer) {
+				
+				if (it instanceof Fish||it instanceof FishHome||it instanceof Heart) {
+					// This if-statement doesn't let anyone step on the rock.
+					// The Snail(s) are not gonna take it.
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the rock.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			else if (it instanceof Fish){
+				if (it instanceof FishHome||it instanceof Heart) {
+					// This if-statement doesn't let anyone step on the rock.
+					// The Snail(s) are not gonna take it.
+					return true;
+				}
+				else {
+					// This if-statement doesn't let anyone step on the rock.
+					// The Snail(s) are not gonna take it.
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+			// If we didn't see an obstacle, we can move there!
 		return true;
-	}
+	}*/
 	
 	/**
 	 * This is how objects may move. Only Snails do right now.
@@ -235,14 +333,24 @@ public class World {
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
 		// TODO(FishGrid) Comment this method!
 		// Q1. What is recentPositions?
+		// The recentPosition is a Deque keep up to NUM_RECENT_POSITIONS locations for every fish.
 		// Q2. What is followers?
+		// Followers is a set of objects to follow the leader, to be specific those fishes that the player collected.
 		// Q3. What is target?
+		// The target is the leader, which is the player.
 		// Q4. Why is past = putWhere[i+1]? Why not putWhere[i]?
+		// Because if we use i to index the List putWhere, we get where the player is now,
+		// However, in order to let the followers follow the target, we need to know where it was the previous step,
+		// which is index (i+1)
 		List<IntPoint> putWhere = new ArrayList<>(target.recentPositions);
 		for (int i=0; i < followers.size() && i+1 < putWhere.size(); i++) {
 			// Q5. What is the deal with the two conditions in this for-loop?
 			// Conditions are in the "while" part of this loop.
-			
+			// First of all, if we want to decide where each follower should be at, 
+			// we want to index into the list where followers are stored, which is <followers>.
+			// However, we cannot index out of the size of the list, there for i < followers.size()
+			// Then, we also use i+1 to index into the List putWhere to get where the target or the player was,
+			// indexing out of that list will cause error too.
 			IntPoint past = putWhere.get(i+1);
 			followers.get(i).setPosition(past.x, past.y);
 		}

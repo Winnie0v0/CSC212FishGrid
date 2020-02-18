@@ -9,7 +9,7 @@ import java.awt.geom.RoundRectangle2D;
  * This is not <a href="https://en.wikipedia.org/wiki/Dwayne_Johnson">the Rock</a>, but a Rock.
  * @author jfoley
  */
-public class Rock extends WorldObject {
+public class FallingRock extends Rock {
 	/**
 	 * I took these colors from Wikipedia's Cool and Warm Gray sections.
 	 * https://en.wikipedia.org/wiki/Shades_of_gray#Cool_grays
@@ -33,7 +33,7 @@ public class Rock extends WorldObject {
 	 * Construct a Rock in our world.
 	 * @param world - the grid world.
 	 */
-	public Rock(World world) {
+	public FallingRock(World world) {
 		super(world);
 		this.index = rand.nextInt(9);
 	}
@@ -50,7 +50,7 @@ public class Rock extends WorldObject {
 
 	@Override
 	public void step() {
-		// Rocks don't actually *do* anything.		
+		this.moveDown();		
 	}
 
 }
