@@ -1,3 +1,8 @@
+/* 
+ * Code in this package are build from existed code.
+ * https://github.com/jjfiv/CSC212FishGrid.git
+ */
+
 package edu.smith.cs.csc212.fishgrid;
 
 import java.awt.Color;
@@ -40,8 +45,6 @@ public class FishHome extends WorldObject {
 		house.addPoint(8, 9);
 		house.addPoint(8, 4);
 	}
-	
-
 
 	@Override
 	public void draw(Graphics2D g) {
@@ -58,5 +61,4 @@ public class FishHome extends WorldObject {
 	public void step() {
 		// Fish home doesn't move, does it?
 	}
-
 }

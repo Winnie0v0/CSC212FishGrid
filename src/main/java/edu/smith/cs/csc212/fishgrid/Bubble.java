@@ -1,3 +1,8 @@
+/* 
+ * Code in this package are build from existed code.
+ * https://github.com/jjfiv/CSC212FishGrid.git
+ */
+
 package edu.smith.cs.csc212.fishgrid;
 
 import java.awt.Color;

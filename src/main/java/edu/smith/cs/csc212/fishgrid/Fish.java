@@ -1,3 +1,8 @@
+/* 
+ * Code in this package are build from existed code.
+ * https://github.com/jjfiv/CSC212FishGrid.git
+ */
+
 package edu.smith.cs.csc212.fishgrid;
 
 import java.awt.Color;
@@ -24,13 +29,16 @@ public class Fish extends WorldObject {
 			Color.magenta,
 			Color.orange,
 			Color.pink,
+			
 			// Black fish is special that have more points!
 			Color.black
 	};
+	
 	/**
 	 * This is an index into the {@link #COLORS} array.
 	 */
 	int color;
+	
 	/**
 	 * Whether or not this is the player;
 	 */
@@ -43,7 +51,6 @@ public class Fish extends WorldObject {
 		this.player = true;
 	}
 
-
 	/**
 	 * A Fish knows what World it belongs to, because all WorldObjects do.
 	 * @param color Color by number.
@@ -54,8 +61,7 @@ public class Fish extends WorldObject {
 		
 		this.color = color;
 		
-		this.fastScare = rand.nextBoolean();
-		
+		this.fastScare = rand.nextBoolean();	
 	}
 	
 	/**
@@ -77,6 +83,7 @@ public class Fish extends WorldObject {
 	 */
 	@Override
 	public void draw(Graphics2D g) {
+		// Draw a small fish that is fastScare.
 		if (this.fastScare) {
 			dt += 1;
 			if (dt > 100) {
@@ -114,7 +121,7 @@ public class Fish extends WorldObject {
 			
 			flipped.dispose();
 		}
-		
+		// Draw regular fish.
 		else {
 			dt += 1;
 			if (dt > 100) {

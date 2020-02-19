@@ -1,3 +1,8 @@
+/* 
+ * Code in this package are build from existed code.
+ * https://github.com/jjfiv/CSC212FishGrid.git
+ */
+
 package edu.smith.cs.csc212.fishgrid;
 
 import java.util.*;
@@ -79,7 +84,6 @@ public class World {
 	 */
 	public void register(WorldObject item) {
 		// Print out what we've added, for our sanity.
-		System.out.println("register: "+item);
 		items.add(item);
 	}
 	
@@ -89,7 +93,6 @@ public class World {
 	 */
 	public void remove(WorldObject item) {
 		// Print out what we've removed, for our sanity.
-		System.out.println("remove: "+item.getClass().getSimpleName());
 		items.remove(item);
 	}
 	
@@ -222,16 +225,12 @@ public class World {
 		List<WorldObject> inSpot = this.find(x, y);
 		
 		for (WorldObject it : inSpot) {
-			// The other fish shouldn't step "on" the player, the player should step on the other fish.
-						// The other fish shouldn't step "on" the player, the player should step on the other fish.
 			if (it instanceof Snail) {
 				// This if-statement doesn't let anyone step on the Snail.
-				// The Snail(s) are not gonna take it.
 				return false;
 			}
 			if (it instanceof Rock) {
-				// This if-statement doesn't let anyone step on the Snail.
-				// The Snail(s) are not gonna take it.
+				// This if-statement doesn't let anyone step on the Rock.
 				return false;
 			}
 			if (it instanceof Fish) {
@@ -239,8 +238,6 @@ public class World {
 					return true;
 				}
 				else {
-					// This if-statement doesn't let anyone step on the Snail.
-					// The Snail(s) are not gonna take it.
 					return false;
 				}
 			}
@@ -249,8 +246,6 @@ public class World {
 					return true;
 				}
 				else {
-					// This if-statement doesn't let anyone step on the Snail.
-					// The Snail(s) are not gonna take it.
 					return false;
 				}
 			}
@@ -259,8 +254,6 @@ public class World {
 					return true;
 				}
 				else {
-					// This if-statement doesn't let anyone step on the Snail.
-					// The Snail(s) are not gonna take it.
 					return false;
 				}
 			}
@@ -269,51 +262,15 @@ public class World {
 					return true;
 				}
 				else {
-					// This if-statement doesn't let anyone step on the Snail.
-					// The Snail(s) are not gonna take it.
 					return false;
 				}
 			}
 			
-		}
-					
-					// If we didn't see an obstacle, we can move there!
+		}			
+			// If we didn't see an obstacle, we can move there!
 			return true;
 		}
 	
-	/*
-			if (isPlayer) {
-				
-				if (it instanceof Fish||it instanceof FishHome||it instanceof Heart) {
-					// This if-statement doesn't let anyone step on the rock.
-					// The Snail(s) are not gonna take it.
-					return true;
-				}
-				else {
-					// This if-statement doesn't let anyone step on the rock.
-					// The Snail(s) are not gonna take it.
-					return false;
-				}
-			}
-			else if (it instanceof Fish){
-				if (it instanceof FishHome||it instanceof Heart) {
-					// This if-statement doesn't let anyone step on the rock.
-					// The Snail(s) are not gonna take it.
-					return true;
-				}
-				else {
-					// This if-statement doesn't let anyone step on the rock.
-					// The Snail(s) are not gonna take it.
-					return false;
-				}
-			}
-			else {
-				return false;
-			}
-		}
-			// If we didn't see an obstacle, we can move there!
-		return true;
-	}*/
 	
 	/**
 	 * This is how objects may move. Only Snails do right now.
@@ -331,7 +288,6 @@ public class World {
 	 * @param followers a set of objects to follow the leader.
 	 */
 	public static void objectsFollow(WorldObject target, List<? extends WorldObject> followers) {
-		// TODO(FishGrid) Comment this method!
 		// Q1. What is recentPositions?
 		// The recentPosition is a Deque keep up to NUM_RECENT_POSITIONS locations for every fish.
 		// Q2. What is followers?

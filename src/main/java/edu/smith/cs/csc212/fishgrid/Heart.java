@@ -1,3 +1,8 @@
+/* 
+ * Code in this package are build from existed code.
+ * https://github.com/jjfiv/CSC212FishGrid.git
+ */
+
 package edu.smith.cs.csc212.fishgrid;
 
 import java.awt.Color;
@@ -6,9 +11,7 @@ import java.awt.Graphics2D;
 /**
  * This class is provided so that you don't have to make any drawing code
  * yourself!
- * 
  * @author jfoley
- *
  */
 public class Heart extends WorldObject {
 
